@@ -1,0 +1,88 @@
+.window {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    min-width: 600px;
+    min-height: 400px;
+    max-width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.window-titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(239, 239, 239, 0.95);
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: grab;
+    user-select: none;
+    height: 15px;
+}
+
+.window-titlebar:active {
+    cursor: grabbing;
+}
+
+.window-title {
+    font-size: 14px;
+    color: #333;
+    margin-right: 20px;
+    flex: 1;
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.window-control.minimize {
+    background-color: #ffbd2e;
+}
+
+.window-control.close {
+    background-color: #ff5f57;
+}
+
+.window-control:hover {
+    filter: brightness(0.9);
+}
+
+.window-control svg {
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    position: absolute;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.window-control:hover svg {
+    opacity: 1;
+}
+
+.window-content {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+}

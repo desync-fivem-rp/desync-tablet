@@ -1,0 +1,66 @@
+.start-menu-overlay {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    height: calc(100% - 50px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1500;
+}
+
+.start-menu {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 12px 12px 0 0;
+    padding: 20px;
+    width: 60%;
+    max-height: 70%;
+    overflow-y: auto;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.2s ease-out;
+}
+
+.start-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 10px;
+}
+
+.app-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.app-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.app-emoji {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.app-name {
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
