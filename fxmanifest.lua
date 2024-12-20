@@ -8,14 +8,27 @@ repository 'https://github.com/project-error/fivem-react-boilerplate-lua'
 lua54 'yes'
 
 games {
-  "gta5",
-  "rdr3"
+	"gta5",
+	"rdr3"
 }
 
 ui_page 'web/build/index.html'
 
-client_script "client/**/*"
-server_script "server/**/*"
+shared_scripts {
+	'@oxmysql/lib/MySQL.lua',
+}
+
+client_scripts {
+	'client/utils/*.lua',
+	'client/modules/*.lua',
+	'client/client.lua'
+}
+
+server_scripts {
+	'server/utils/*.lua',
+	'server/modules/*.lua',
+	'server/server.lua'
+}
 
 files {
 	'web/build/index.html',

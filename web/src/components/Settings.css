@@ -79,3 +79,52 @@
 .setting-buttons button:hover {
     opacity: 0.9;
 }
+
+.settings-container {
+    padding: 20px;
+    color: #d4d4d4;
+}
+
+.setting-group {
+    margin-bottom: 20px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+.setting-group input {
+    width: 100%;
+    padding: 8px;
+    background-color: #3c3c3c;
+    border: 1px solid #4c4c4c;
+    border-radius: 4px;
+    color: #d4d4d4;
+    font-size: 14px;
+}
+
+.setting-group input:focus {
+    outline: none;
+    border-color: #007acc;
+}
+
+.settings-container button {
+    padding: 8px 16px;
+    background-color: #007acc;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.settings-container button:hover {
+    background-color: #0098ff;
+}
+
+.settings-container button:active {
+    background-color: #005999;
+}

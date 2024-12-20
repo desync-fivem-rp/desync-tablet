@@ -4,18 +4,15 @@ import './StartMenu.css';
 interface StartMenuProps {
     isOpen: boolean;
     onClose: () => void;
+    onCreateNote: () => void;
 }
 
-const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
+const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onCreateNote }) => {
     if (!isOpen) return null;
 
     const apps = [
-        { id: 1, name: 'Messages', icon: '💬' },
-        { id: 2, name: 'Browser', icon: '🌐' },
-        { id: 3, name: 'Notes', icon: '📝' },
-        { id: 4, name: 'Calculator', icon: '🧮' },
-        { id: 5, name: 'Calendar', icon: '📅' },
-        { id: 6, name: 'Photos', icon: '🖼️' },
+        { id: 'notes', name: 'Notes', icon: '📝', onClick: onCreateNote },
+        // Add more apps here as needed
     ];
 
     const handleClickOutside = (e: React.MouseEvent) => {
@@ -29,7 +26,14 @@ const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose }) => {
             <div className="start-menu">
                 <div className="start-menu-grid">
                     {apps.map(app => (
-                        <div key={app.id} className="app-icon">
+                        <div 
+                            key={app.id} 
+                            className="app-icon"
+                            onClick={() => {
+                                app.onClick();
+                                onClose();
+                            }}
+                        >
                             <span className="app-emoji">{app.icon}</span>
                             <span className="app-name">{app.name}</span>
                         </div>

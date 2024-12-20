@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import './App.css';
-import './Settings.css';
-import './StartMenu.css';
-import './Window.css';
 import { PiGearSixThin } from "react-icons/pi";
 import { BsFillGridFill } from "react-icons/bs";
 import Settings from './Settings';
 import StartMenu from './StartMenu';
 import Window from './Window';
+import Notes from './Notes';
+import './App.css';
 
 interface OpenWindow {
     id: string;
+    type: string;
     title: string;
     isMinimized: boolean;
+    noteId?: string;
 }
 
 const Tablet: React.FC = () => {
@@ -21,15 +21,15 @@ const Tablet: React.FC = () => {
     const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-    const openWindow = (id: string, title: string) => {
-        if (!openWindows.some(w => w.id === id)) {
-            setOpenWindows([...openWindows, { id, title, isMinimized: false }]);
-        } else {
-            // If window exists, unminimize it
-            setOpenWindows(openWindows.map(w => 
-                w.id === id ? { ...w, isMinimized: false } : w
-            ));
-        }
+    const createNewNote = () => {
+        const windowId = `notes-${Date.now()}`;
+        setOpenWindows(windows => [...windows, {
+            id: windowId,
+            type: 'notes',
+            title: 'Untitled Note',
+            isMinimized: false
+        }]);
+        setIsStartMenuOpen(false);
     };
 
     const closeWindow = (id: string) => {
@@ -43,51 +43,74 @@ const Tablet: React.FC = () => {
         ));
     };
 
-    const handleSettingsClick = () => {
-        setIsSettingsOpen(true);
-        openWindow('settings', 'Settings');
+    const handleNoteSave = (note: { title: string }, windowId: string) => {
+        setOpenWindows(windows => 
+            windows.map(w => 
+                w.id === windowId 
+                    ? { ...w, title: note.title || 'Untitled Note' }
+                    : w
+            )
+        );
+    };
+
+    const handleSaveBackground = (url: string) => {
+        setBackgroundUrl(url);
+        setIsSettingsOpen(false);
+    };
+
+    const handleNoteTitleChange = (windowId: string, newTitle: string) => {
+        setOpenWindows(windows =>
+            windows.map(w =>
+                w.id === windowId
+                    ? { ...w, title: newTitle }
+                    : w
+            )
+        );
     };
 
     return (
-        <div className="tablet-background">
-            <div className="tablet-content">
-                <div 
-                    className="desktop"
-                    style={{
-                        backgroundImage: backgroundUrl ? `url('${backgroundUrl}')` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat'
-                    }}
-                >
-                    {/* Windows */}
-                    {openWindows.map(({ id, title, isMinimized }) => {
-                        if (isMinimized) return null;
-                        
-                        if (id === 'settings') {
-                            return (
-                                <Window
-                                    key={id}
-                                    id={id}
-                                    title={title}
-                                    isOpen={isSettingsOpen}
-                                    onClose={() => closeWindow(id)}
-                                    onMinimize={() => minimizeWindow(id)}
-                                >
-                                    <Settings 
-                                        isOpen={true}
-                                        onClose={() => closeWindow(id)}
-                                        onBackgroundChange={setBackgroundUrl}
-                                        currentBackground={backgroundUrl}
-                                    />
-                                </Window>
-                            );
-                        }
-                        return null; // Add other window types here
-                    })}
-                </div>
+        <div className="tablet-container">
+            <div className="tablet-screen" style={{ backgroundImage: `url(${backgroundUrl})` }}>
+                {openWindows.map(window => (
+                    <Window
+                        key={window.id}
+                        id={window.id}
+                        title={window.title}
+                        isMinimized={window.isMinimized}
+                        onClose={() => closeWindow(window.id)}
+                        onMinimize={() => minimizeWindow(window.id)}
+                    >
+                        {window.type === 'notes' && (
+                            <Notes
+                                id={window.id}
+                                noteId={window.noteId}
+                                onClose={() => closeWindow(window.id)}
+                                onSave={(note) => handleNoteSave(note, window.id)}
+                                onTitleChange={(title) => handleNoteTitleChange(window.id, title)}
+                            />
+                        )}
+                    </Window>
+                ))}
 
-                {/* Taskbar */}
+                {isSettingsOpen && (
+                    <Window
+                        id="settings"
+                        title="Settings"
+                        onClose={() => setIsSettingsOpen(false)}
+                    >
+                        <Settings
+                            backgroundUrl={backgroundUrl}
+                            onSave={handleSaveBackground}
+                        />
+                    </Window>
+                )}
+
+                <StartMenu 
+                    isOpen={isStartMenuOpen}
+                    onClose={() => setIsStartMenuOpen(false)}
+                    onCreateNote={createNewNote}
+                />
+
                 <div className="taskbar">
                     <div className="taskbar-left">
                         <div 
@@ -95,7 +118,6 @@ const Tablet: React.FC = () => {
                             onClick={() => setIsStartMenuOpen(!isStartMenuOpen)}
                         >
                             <BsFillGridFill className='start-icon' />
-                            {/* <span>Start</span> */}
                         </div>
                     </div>
 
@@ -105,13 +127,11 @@ const Tablet: React.FC = () => {
                                 key={window.id}
                                 className={`taskbar-icon ${window.isMinimized ? 'minimized' : 'active'}`}
                                 onClick={() => {
-                                    if (window.isMinimized) {
-                                        setOpenWindows(windows => 
-                                            windows.map(w => 
-                                                w.id === window.id ? { ...w, isMinimized: false } : w
-                                            )
-                                        );
-                                    }
+                                    setOpenWindows(windows => 
+                                        windows.map(w => 
+                                            w.id === window.id ? { ...w, isMinimized: false } : w
+                                        )
+                                    );
                                 }}
                             >
                                 <span>{window.title}</span>
@@ -122,19 +142,12 @@ const Tablet: React.FC = () => {
                     <div className="taskbar-right">
                         <div 
                             className="taskbar-icon"
-                            onClick={handleSettingsClick}
+                            onClick={() => setIsSettingsOpen(true)}
                         >
                             <PiGearSixThin className='settings-icon' />
-                            {/* <span>Settings</span> */}
                         </div>
                     </div>
                 </div>
-
-                {/* Start Menu */}
-                <StartMenu 
-                    isOpen={isStartMenuOpen}
-                    onClose={() => setIsStartMenuOpen(false)}
-                />
             </div>
         </div>
     );
