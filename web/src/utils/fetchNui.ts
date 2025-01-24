@@ -5,6 +5,8 @@ export async function fetchNui<T = unknown>(
     eventName: string,
     data?: unknown
 ): Promise<T> {
+    // console.log(`Sending NUI request: ${eventName}`, data); // Add this line
+
     if (isEnvBrowser()) {
         switch (eventName) {
             case 'getNotes':
@@ -16,6 +18,14 @@ export async function fetchNui<T = unknown>(
             default:
                 console.warn(`No mock data handler for event: ${eventName}`);
                 return {} as T;
+            case 'getSettings':
+                return { scale: 1 } as T;
+            case 'saveSettings':
+                return { success: true } as T;
+            case "getBackgroundUrl":
+                return { url: "" } as T;
+            case "saveBackgroundUrl":
+                return { success: true } as T;
         }
     }
 
@@ -33,6 +43,8 @@ export async function fetchNui<T = unknown>(
 
     const resp = await fetch(`https://${resourceName}/${eventName}`, options);
     const respFormatted = await resp.json();
+    // console.log(`Received NUI response: ${eventName}`, respFormatted); // Add this line
+
 
     return respFormatted;
 }

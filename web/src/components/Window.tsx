@@ -25,8 +25,14 @@ const Window: React.FC<WindowProps> = ({
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [resizeDirection, setResizeDirection] = useState<string>('');
     const windowRef = useRef<HTMLDivElement>(null);
+    const [zIndex, setZIndex] = useState(0);
+
+    const bringToFront = () => {
+        setZIndex(prev => prev + 1);
+    };
 
     const handleMouseDown = (e: React.MouseEvent) => {
+        bringToFront();
         if ((e.target as HTMLElement).closest('.window-controls-left')) return;
         
         const target = e.target as HTMLElement;
@@ -112,7 +118,8 @@ const Window: React.FC<WindowProps> = ({
                 top: position.y,
                 width: size.width,
                 height: size.height,
-                cursor: isDragging ? 'grabbing' : 'default'
+                cursor: isDragging ? 'grabbing' : 'default',
+                zIndex: zIndex
             }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}

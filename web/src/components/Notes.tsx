@@ -25,9 +25,8 @@ const Notes: React.FC<NotesProps> = ({ id, noteId, onClose, onSave, onTitleChang
     const loadNotes = async () => {
         try {
             const notes = await fetchNui<Note[]>('getNotes');
-            if (Array.isArray(notes)) {
-                setAllNotes(notes);
-            }
+            console.log("notes: " + (notes))
+            setAllNotes(notes);
         } catch (error) {
             console.error('Failed to load notes:', error);
         }
@@ -44,7 +43,13 @@ const Notes: React.FC<NotesProps> = ({ id, noteId, onClose, onSave, onTitleChang
         }
     }, [noteId, allNotes]);
 
+    useEffect(() => {
+        console.log('All Notes:', allNotes);
+    }, [allNotes]);
+
     const handleSave = async () => {
+        if (isSaving) return; // Prevent multiple saves if already saving
+
         setIsSaving(true);
         try {
             const response = await fetchNui('saveNote', {
@@ -53,17 +58,18 @@ const Notes: React.FC<NotesProps> = ({ id, noteId, onClose, onSave, onTitleChang
                 content: note.content
             });
 
-            if (response.success) {
-                if (!note.id && response.noteId) {
-                    setNote(prev => ({ ...prev, id: response.noteId }));
-                }
-                if (onSave) onSave(note);
-                await loadNotes();
-            }
+            // if (response.success) {
+            //     if (!note.id && response.noteId) {
+            //         setNote(prev => ({ ...prev, id: response.noteId }));
+            //     }
+            //     if (onSave) onSave(note);
+            //     await loadNotes();
+            // }
         } catch (error) {
             console.error('Failed to save note:', error);
         } finally {
-            setIsSaving(false);
+            // Set a timeout to reset isSaving after 1 second
+            setTimeout(() => setIsSaving(false), 1000);
         }
     };
 

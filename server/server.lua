@@ -1,9 +1,9 @@
 -- Initialize modules
-local Database = require 'server.utils.database'
-local NotesModule = require 'server.modules.notes'
-local BackgroundModule = require 'server.modules.background'
+local Database = require '@desync-tablet/server/utils/database'
+-- local NotesModule = require '@desync-tablet/server/modules/notes'
+-- local BackgroundModule = require '@desync-tablet/server/modules/background'
 
 -- Initialize database tables when resource starts
-CreateThread(function()
-    Database.Initialize()
-end)
+-- CreateThread(function()
+--     Database.Initialize()
+-- end)

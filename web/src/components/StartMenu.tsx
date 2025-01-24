@@ -5,13 +5,15 @@ interface StartMenuProps {
     isOpen: boolean;
     onClose: () => void;
     onCreateNote: () => void;
+    onCreateTodo: () => void;
 }
 
-const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onCreateNote }) => {
+const StartMenu: React.FC<StartMenuProps> = ({ isOpen, onClose, onCreateNote, onCreateTodo }) => {
     if (!isOpen) return null;
 
     const apps = [
         { id: 'notes', name: 'Notes', icon: '📝', onClick: onCreateNote },
+        { id: 'todo', name: 'Todo', icon: '📝', onClick: onCreateTodo },
         // Add more apps here as needed
     ];
 

@@ -4,8 +4,10 @@ local NotesModule = {
 
 -- Handle receiving notes from server
 RegisterNetEvent('tablet:setNotes', function(receivedNotes)
+    print("receivedNotes: " .. json.encode(receivedNotes))
     NotesModule.notes = receivedNotes
-    SendReactMessage('setNotes', NotesModule.notes)
+    print("NotesModule.notes: " .. json.encode(NotesModule.notes))
+    SendReactMessage('setAllNotes', NotesModule.notes)
 end)
 
 -- Handle note creation confirmation
@@ -15,6 +17,7 @@ end)
 
 -- NUI Callbacks
 RegisterNUICallback('saveNote', function(data, cb)
+    print(json.encode(data))
     TriggerServerEvent('tablet:saveNote', data)
     cb({success = true})
 end)
@@ -25,8 +28,9 @@ RegisterNUICallback('deleteNote', function(data, cb)
 end)
 
 RegisterNUICallback('getNotes', function(_, cb)
-    TriggerServerEvent('tablet:getNotes')
-    cb({success = true})
+    local notes = lib.callback.await('tablet:getNotes', false)
+    print("notes: " .. json.encode(notes))
+    cb(notes)
 end)
 
 return NotesModule

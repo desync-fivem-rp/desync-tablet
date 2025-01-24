@@ -1,33 +1,39 @@
 fx_version "cerulean"
 
-description "Basic React (TypeScript) & Lua Game Scripts Boilerplate"
-author "Project Error"
+description "Desync Tablet"
+author "Desync"
 version '1.0.0'
-repository 'https://github.com/project-error/fivem-react-boilerplate-lua'
 
 lua54 'yes'
 
 games {
 	"gta5",
-	"rdr3"
 }
 
 ui_page 'web/build/index.html'
 
 shared_scripts {
-	'@oxmysql/lib/MySQL.lua',
+	'@ox_lib/init.lua',
+	'config.lua',
+	'@ox_core/lib/init.lua',
+	-- '@oxmysql/lib/MySQL.lua',
 }
 
 client_scripts {
-	'client/utils/*.lua',
-	'client/modules/*.lua',
+	'client/utils.lua',
+	'client/modules/notes.lua',
+	'client/modules/settings.lua',
+	'client/modules/todo.lua',
 	'client/client.lua'
 }
 
 server_scripts {
-	'server/utils/*.lua',
-	'server/modules/*.lua',
-	'server/server.lua'
+	'server/utils/database.lua',
+	'server/modules/settings.lua',
+	'server/modules/notes.lua',
+	'server/modules/todo.lua',
+	'server/server.lua',
+	'@oxmysql/lib/MySQL.lua'
 }
 
 files {

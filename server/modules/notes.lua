@@ -1,35 +1,38 @@
-local Database = require 'server.utils.database'
+-- local Database = require '@desync-tablet/server/utils/database'
 
 local NotesModule = {}
 
 -- Get notes for a player
 function NotesModule.GetPlayerNotes(source)
     local identifier = GetPlayerIdentifier(source, 0)
-    
-    MySQL.query('SELECT * FROM tablet_notes WHERE owner_identifier = ? ORDER BY updated_at DESC', {
-        identifier
-    }, function(result)
-        TriggerClientEvent('tablet:setNotes', source, result or {})
-    end)
+    local player = Ox.GetPlayer(source)
+    local id = player.charId
+    local result = MySQL.query.await('SELECT * FROM tablet_notes WHERE charId = ?', {
+        id
+    })
+    -- print("result: " .. json.encode(result))
+    -- TriggerClientEvent('tablet:setNotes', source, result or {})
+    return result
 end
 
 -- Save or update a note
 function NotesModule.SaveNote(source, noteData)
     local identifier = GetPlayerIdentifier(source, 0)
-    
+    local player = Ox.GetPlayer(source)
+    local id = player.charId
+    print(id)
     if noteData.id then
         -- Update existing note
-        MySQL.query('UPDATE tablet_notes SET title = ?, content = ? WHERE id = ? AND owner_identifier = ?', {
-            noteData.title, noteData.content, noteData.id, identifier
+        MySQL.query('UPDATE tablet_notes SET title = ?, content = ? WHERE id = ? AND charId = ?', {
+            noteData.title, noteData.content, noteData.id, id
         })
     else
         -- Create new note
-        local uuid = Database.GenerateUUID()
-        MySQL.insert('INSERT INTO tablet_notes (id, owner_identifier, title, content) VALUES (?, ?, ?, ?)', {
-            uuid, identifier, noteData.title, noteData.content
+        MySQL.insert('INSERT INTO tablet_notes (charId, owner_identifier, title, content) VALUES (?, ?, ?, ?)', {
+            id, identifier, noteData.title, noteData.content
         })
         -- Return the new note ID
-        TriggerClientEvent('tablet:noteCreated', source, uuid)
+        TriggerClientEvent('tablet:noteCreated', source, noteData.id)
     end
 end
 
@@ -42,10 +45,14 @@ function NotesModule.DeleteNote(source, noteId)
     })
 end
 
--- Register events
-RegisterNetEvent('tablet:getNotes', function()
-    NotesModule.GetPlayerNotes(source)
+lib.callback.register('tablet:getNotes', function(source)
+    return NotesModule.GetPlayerNotes(source)
 end)
+
+-- Register events
+-- RegisterNetEvent('tablet:getNotes', function()
+--     NotesModule.GetPlayerNotes(source)
+-- end)
 
 RegisterNetEvent('tablet:saveNote', function(noteData)
     NotesModule.SaveNote(source, noteData)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PiGearSixThin } from "react-icons/pi";
 import { BsFillGridFill } from "react-icons/bs";
 import Settings from './Settings';
@@ -6,6 +6,8 @@ import StartMenu from './StartMenu';
 import Window from './Window';
 import Notes from './Notes';
 import './App.css';
+import { fetchNui } from '../utils/fetchNui';
+import TodoApp from './TodoApp';
 
 interface OpenWindow {
     id: string;
@@ -20,6 +22,28 @@ const Tablet: React.FC = () => {
     const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
     const [openWindows, setOpenWindows] = useState<OpenWindow[]>([]);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isTodoOpen, setIsTodoOpen] = useState(false);
+
+    const createNewTodo = () => {
+        const windowId = `todo-${Date.now()}`;
+        setOpenWindows(windows => [...windows, {
+            id: windowId,
+            type: 'todo',
+            title: 'Todo List',
+            isMinimized: false
+        }]);
+        setIsStartMenuOpen(false);
+    };
+
+    const fetchUrl = async () => {
+        const url = await fetchNui<string>('getSettings');
+        // console.log("url: " + url)
+        setBackgroundUrl(url);
+    };
+
+    useEffect(() => {
+        fetchUrl();
+    }, []);
 
     const createNewNote = () => {
         const windowId = `notes-${Date.now()}`;
@@ -89,6 +113,9 @@ const Tablet: React.FC = () => {
                                 onTitleChange={(title) => handleNoteTitleChange(window.id, title)}
                             />
                         )}
+                        {window.type === 'todo' && (
+                            <TodoApp />
+                        )}
                     </Window>
                 ))}
 
@@ -109,6 +136,7 @@ const Tablet: React.FC = () => {
                     isOpen={isStartMenuOpen}
                     onClose={() => setIsStartMenuOpen(false)}
                     onCreateNote={createNewNote}
+                    onCreateTodo={createNewTodo}
                 />
 
                 <div className="taskbar">
